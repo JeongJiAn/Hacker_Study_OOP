@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 1주차 학습 정리<br>
 ## Today's Topic: git사용법 + Chapter1, 2<br><br>
 
@@ -35,3 +36,14 @@
 <br><br><br>
 
 ### **Chapter 1**
+=======
+#1주차 학습 정리
+##git사용법 + Chapter1, 2
+
+###git 사용법
+1. git bash 다운로드
+  다운로드 사이트: https://git-scm.com/downloads
+  별 다른 설정 없이 next 눌러도 무방
+1. git hub Repository 생성
+  
+>>>>>>> ed525efdeace9ae12c3cc1767b0df90150421882
