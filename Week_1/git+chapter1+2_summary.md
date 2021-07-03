@@ -8,8 +8,13 @@
   
 1. **git bash 설정<br>**
     git bash 실행 후<br>
+<<<<<<< HEAD
     ```git config --global user.name 깃허브 이름```<br>
     ```git config --global user.email 깃허브 등록 이메일```<br>
+=======
+    '''git config --global user.name 깃허브 이름'''<br>
+    'git config --global user.email 깃허브 등록 이메일'<br>
+>>>>>>> 69130bbbc80e8a19ef7a9783c8316b525f576ca0
     <img width="100%" src = "https://user-images.githubusercontent.com/83760210/124227122-1d8df100-db45-11eb-9521-2eae31865305.PNG"><br>
     //git bash 설정 완료 화면<br>
 
