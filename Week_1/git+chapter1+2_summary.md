@@ -36,7 +36,7 @@
     //push까지 완료 후 화면<br>
 <br><br><br>
 
-### **Chapter 1**
+### **Chapter 1) C와는 다른 C++**
 1. **C와 C++의 차이<br>**
     C++ : C의 비효율성을 개선한 언어<br><br>
 
@@ -357,4 +357,277 @@
     범위 기반 for문의 가장 큰 장점은 반복 횟수가 배열 요소 개수에 맞춰 자동으로 결정된다는 것이다.<br>
     즉, 배열의 크기가 변할 것을 고려하지 않아도 된다는 것이다.<br><br><br><br>
 
-### **Chapter 2**
+### **Chapter 2) C++ 함수와 네임스페이스**
+1. **디폴트 매개변수<br>**
+    C++의 함수는 C와는 다르게 매개변수의 디폴트 값을 선언할 수 있다.<br>
+    매개변수의 디폴트 값을 선언한 함수는 호출자 코드에서 실인수를 생략한 채 호출할 수 있다.<br>
+    ```
+    int testFunc(int = 10);
+
+    void main(){
+        std::cout << testFunc() << std::endl;
+        std::cout << testFunc(10) << std::endl;
+    }
+
+    int testFunc(int n_param){
+        return n_param;
+    }
+    ```
+    ```
+    >>>10
+       10
+    ```
+    위의 코드에서 `testFunc()`와 `testFunc(10)`의 결과가 같음을 알 수 있다.<br><br>
+    매개변수의 디폴트 값을 기술할 때에는 다음 규칙을 지켜야 한다.<br><br>
+    1. 피호출자 함수 매개변수의 디폴트 값은 **반드시 오른쪽 매개변수부터 기술**해야 한다.<br>
+    1. 매개변수가 여러 개일 때 왼쪽 첫 번째 매개변수의 디폴트 값을 기술하려면 나머지 오른쪽 '모든' 매개변수에 대한 디폴트 값을 기술해야 한다.<br>
+    1. 호출자 함수가 피호출자 함수 매개변수의 실인수를 기술하면 이는 왼쪽부터 짝을 맞추어 적용되며, 짝이 맞지 않는 매개변수는 디폴트 값을 적용한다.<br>
+    
+    <br>
+1. **함수 다중 정의<br>**
+    C++에서 '다중 정의(Overloading)'는 하나의 함수 이름이나 변수 이름이 여러 의미를 동시에 갖는 것을 말한다.<br>
+    C에서는 이름이 같은 함수가 존재할 수 없지만 C++에서는 어떤 식으로든 함수 원형이 달라지면 이름이 같더라도 다른 함수가 된다.<br>
+    이를 통해 C++은 함수의 '다형성'을 지원한다.<br>
+    ```
+    #include <iostream>
+    using namespace std;
+
+    int Add(int a, int b, int c){
+        cout << "Add(int, int, int): ";
+
+        return a + b + c;
+    }
+
+    int Add(int a, int b){
+        cout << "Add(int, int): ";
+        
+        return a + b;
+    }
+
+    double Add(double a, double b){
+        cout << "Add(double, double): ";
+
+        return a + b;
+    }
+
+    void main() {
+        cout << Add(3, 4) << endl;
+        cout << Add(3, 4, 5) << endl;
+        cout << Add(3.3, 4.4) << endl;
+    }
+    ```
+    ```
+    >>>Add(int, int): 7
+       Add(int, int, int): 12
+       Add(double, double): 7.7
+    ```
+    위의 코드에서 Add()라는 이름의 함수가 세 가지 형태로 다중 정의되었다.<br>
+    다중 정의는 Add()라는 함수 이름은 그대로 사용하면서 '더하기'라는 한 가지 개념을 여러 가지 형태로 다양하게 구현할 수 있다.<br><br>
+    C의 함수 원형은 `반환 형식`, `호출 규칙`, `함수 이름`, `매개변수` 크게 네 가지가 있다.<br>
+    이 중 다중 정의에 영향을 주는 것은 `매개변수` 뿐이다.<br>
+    즉, 반환 형식, 호출 규칙, 함수 이름이 같고 매개변수 만이 다른 함수들을 다중 정의 함수라 한다.<br><br>
+    다중 정의 함수를 사용할 때에는 주의해야 할 점이 있다.<br>
+    ```
+    #include <iostream>
+    using namespace std;
+
+    void testFunc(int a){ //1번
+        cout << "testFunc(int)" << endl;
+    }
+
+    void testFunc(int a, int b = 10){ //2번
+        cout << "testFunc(int, int)" << endl;
+    }
+
+    void main(){
+        testFunc(5);
+    }
+    ```
+    위의 코드를 실행하면 컴파일 오류가 발생한다.<br>
+    ```
+    >>>오버로드된 함수에 대한 호출이 모호합니다.
+    ```
+    여기서 주목할 것은 호출이 **모호**하다는 점이다.<br>
+    1번 함수는 매개변수를 하나만 받는 함수이고, 2번 함수는 매개변수를 두개 받는 함수이다.<br>
+    그러나 2번 함수의 경우 두 매개변수 중 하나에 디폴트 값을 선언한 상태이기에 호출자가 함수를 호출 할 때 매개변수를 하나만 넘겨줘도 호출이 가능하다.<br>
+    매개변수를 하나만 넘겨줄 경우, 호출자가 1번 함수를 호출하는지, 2번 함수를 호출하는지 컴파일러가 알 수 없다.<br>
+    그렇기에 호출이 모호하다는 것이다.<br>
+    이러한 점을 유의한다면 다중 정의 함수는 사용자의 편의성과 확장성을 얻을 수 있다.<br><br>
+    
+    함수를 다중 정의함으로 인해 사용자는 편할 수 있으나, 제작자는 같은 일을 여러 번 반복해야 한다.<br>
+    단적인 예가 위의 Add()함수 코드이다.<br>
+    또한, 같은 일을 하는 코드가 다중 정의된 함수 여러 개로 존재하게 된다는 것도 문제이다.<br>
+    이를 해결하기 위해 C++에서는 함수 템플릿을 사용한다.
+    ```
+    #include <iostream>
+    using namespace std;
+
+    template <typename T>
+    T Add(T a, T b)
+    {
+        return a + b;
+    }
+
+    void main(){
+        cout << Add(3, 4) << endl;
+        cout << Add(3.3, 4.4) << endl;
+    }
+    ```
+    함수 템플릿을 사용하면 위의 Add() 함수 다중 정의 코드와 동일한 동작을 간결하고 확장성 높게 만들 수 있다.<br>
+    Add(3, 4)를 호출하면 typename `T`를 3과 4의 자료형 `<int>`로 해석한다.<br>
+    함수 템플릿을 사용하면 코드를 만들어 놓고 전혀 사용하지 않는 상황은 발생할 수 없으며, 무엇보다 같은 일을 하는 코드가 여러 번 등장할 필요가 없어졌기 때문에 안정적인 구조라 할 수 있다.<br><br>
+1. **인라인 함수<br>**
+    함수는 호출 시 스택 메모리 사용이 증가하고 매개변수로 인해 메모리 복사가 일어난다.<br>
+    또한, 제어 흐름도 이동해야 한다.<br>
+    이러한 문제를 해결하기 위해 사용하는 것이 매크로이다.<br>
+    그러나 매크로는 함수가 아니므로 다양한 논리적 오류를 발생시키기도 한다.<br>
+    매개변수에 형식을 지정할 수 없다는 점도 큰 문제이다.<br><br>
+    그래서 등장한 것이 인라인 함수이다.<br>
+    인라인 함수는 매크로의 장점과 함수의 장점을 두루 갖춘 함수이다.<br>
+    본질적으로 함수이므로 매개변수에 형식을 지정할 수 있어 매크로의 단점을 보완해주며, 내부적으로는 매크로처럼 함수 호출을 하지 않는다.<br>
+    ```
+    #include <iostream>
+    #include <cstdio>
+
+    #define ADD(a, b)((a) + (b))
+
+    int Add(int a, int b){
+        return a + b;
+    }
+
+    inline AddNew(int a, int b){
+        return a + b;
+    }
+
+    void main(){
+        int a, b;
+        scanf_s("%d%d", &a, &b);
+
+        printf("ADD(): %d\n", ADD(a, b));
+        printf("Add(): %d\n", Add(a, b));
+        printf("AddNew(): %d\n", AddNew(a, b));
+    }
+    ```
+    ```
+    >>>3 4
+       ADD(): 7
+       Add(): 7
+       AddNew(): 7
+    ```
+    위의 소스코드에서 매크로든 일반 함수든 인라인 함수든 결과는 모두 동일 하다.<br>
+    가능하다면 모든 함수를 인라인 함수로 처리하면 좋겠지만, 코드가 일정 수준 이상 길어지면 인라인 함수가 되는 것은 바람직하지 않다.<br>
+    바람직한 코드의 길이는 개발자가 정하는 것이 아닌 컴파일러가 정하는 것으로, 일정 길이 이하의 함수는 모두 컴파일러가 알아서 인라인 함수로 받아들인다.<br><br>
+1. **네임스페이스<br>**
+    `namespace`는 C++가 지원하는 각종 요소들을 한 범주로 묶어주기 위한 문법이다.<br>
+    네임스페이스를 선언하는 방법은 다음과 같다.<br>
+    ```
+    namespace TEST
+    {
+        int g_n_data = 100;
+
+        void testFunc(){
+            std::cout << "TEST::testFunc()" << endl;
+        }
+    }
+    ```
+    네임스페이스 블록 내부에 선언하는 변수나 함수들은 모두 명시한 '이름'에 속한다.<br>
+    위의 코드에서 int 형 변수 g_n_data와 함수 testFunc()는 모두 TEST라는 네임스페이스에 속한다.<br><br>
+    프로그램 내부에서 앞으로 자주 사용해야 하는 네임스페이스가 있다면 모든 식별자 앞에 이를 기술하는 것은 귀찮다.<br>
+    이를 해결해주는 것이 바로 `using` 예약어이다.<br>
+    ```
+    using namespace std;
+
+    void main(){
+        cout << "using std" << endl;
+    }
+    ```
+    ```
+    >>>using std
+    ```
+    위의 소스코드에서 std::cout이 아닌 cout을 써도 성립하는 이유는 `using namespace std` 때문이다.<br><br>
+    네임스페이스는 중첩이 가능하다.<br>
+    하나의 네임스페이스 안에 여러 개의 네임스페이스가 속할 수 있다.<br>
+    ```
+    #include <iostream>
+    using namespace std;
+
+    namespace TEST
+    {
+        int g_n_data = 100;
+        namespace DEV
+        {
+            int g_n_data = 200;
+            namespace WIN
+            {
+                int g_n_data = 300;
+            }
+        }
+    }
+
+    void main(){
+        cout << TEST::g_n_data << endl;
+        cout << TEST::DEV::g_n_data << endl;
+        cout << TEST::DEV::WIN::g_n_data << endl;
+    }
+    ```
+    ```
+    >>>100
+       200
+       300
+    ```
+    <br>C++에서의 식별자는 C와 달리 '네임스페이스::이름'의 형태를 취한다.<br>
+    즉, 이름이 같다는 것은 속해 있는 네임스페이스도 같다는 의미이다.<br>
+    네임스페이스는 달라도 나머지가 같은 형태로 선언되었다면 다중 정의가 가능하다.<br>
+    ```
+    #include <iostream>
+    using namespace std;
+
+    void testFunc(){
+        cout << "::testFunc()" << endl;
+    }
+
+    namespace TEST
+    {
+        void testFunc(){
+            cout << "TEST::testFunc()" << endl;
+        }
+    }
+
+    namespace MYDATA
+    {
+        void testFunc(){
+            cout << "DATA::testFunc()"" << endl;
+        }
+    }
+
+    void main(){
+        testFunc();
+        ::testFunc();
+        TEST::testFunc();
+        MYDATA::testFunc();
+    }
+    ```
+    ```
+    >>>::testFunc()
+       ::testFunc()
+       TEST::testFunc()
+       DATA::testFunc()
+    ```
+    위의 소스코드에서 네임스페이스는 전역, TEST, MYDATA 이렇게 세 가지이다.<br>
+    세 가지 네임스페이스 모두에 void testFunc() 함수가 존재하므로 호출자는 네임스페이스를 기술함으로써 각각을 구별해 호출해야 한다.<br><br>
+1. **식별자 검색 순서<br>**
+    C++에서 식별자가 선언된 위치를 검색하는 순서는 다음과 같다.<br><br>
+    **전역 함수인 경우<br>**
+    1. 현재 블록 범위
+    1. 현재 블록 범위를 포함하는 상위 블록 범위
+    1. 가장 최근에 선언된 전역 변수나 함수
+    1. using 선언된 네임스페이스 혹은 전역 네임스페이스(두 곳에 동일한 식별자가 존재할 경우 컴파일 오류 발생)
+
+    <br>**클래스 매서드인 경우<br>**
+    1. 현재 블록 범위
+    1. 현재 블록 범위를 포함하는 상위 블록 범위
+    1. 클래스의 멤버
+    1. 부모 클래스의 멤버
+    1. 가장 최근에 선언된 전역 변수나 함수
+    1. 호출자 코드가 속한 네임스페이스의 상위 네임스페이스
+    1. using 선언된 네임스페이스 혹은 전역 네임스페이스(두 곳에 동일한 식별자가 존재할 경우 컴파일 오류 발생)
